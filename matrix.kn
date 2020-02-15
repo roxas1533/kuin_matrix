@@ -1,0 +1,68 @@
++class Matrix()
+	+var data: [][]float
+	+func new(mem: [][]float)
+		var len: int :: ^mem[0]
+		for i(1, ^mem - 1)
+			if(^mem[i] <> len)
+				do dbg@print("行列になっていません。")
+				throw 0x00000001
+			end if
+		end for
+		do me.data :: mem
+	end func
+	+func trans(): @Matrix
+		var transM: [][]float :: #[^me.data[0], ^me.data]float
+		for i(0, ^transM - 1)
+			for j(0, ^transM[0] - 1)
+				do transM[i][j] :: me.data[j][i]
+			end for
+		end for
+		var transverse: @Matrix :: #@Matrix
+		do transverse.new(transM)
+		ret transverse
+	end func
+	+func shape(): []int
+		ret[^me.data, ^me.data[0]]
+	end func
+	+*func toStr(): []char
+		var c: []char :: "|"
+		for i(0, ^me.data - 1)
+			for j(0, ^me.data[0] - 1)
+				do c :~ me.data[i][j].toStr() ~ (j = ^me.data[0] - 1 ?("|\n", ","))
+			end for
+			if(i <> ^me.data - 1)
+				do c :~ "|"
+			end if
+		end for
+		ret c
+	end func
+end class
+
+func checkShape(m1: &@Matrix, m2: &@Matrix)
+	if(m1.shape()[0] <> m2.shape()[0] | m1.shape()[1] <> m2.shape()[1])
+		do dbg@print("行または列の数が一致しません。")
+		throw 0x00000002
+	end if
+end func
+
++func add(m1: &@Matrix, m2: &@Matrix): @Matrix
+	do @checkShape(&m1, &m2)
+	var temp: @Matrix :: ##m1
+	for i(0, ^m1.data - 1)
+		for j(0, ^m1.data[0] - 1)
+			do temp.data[i][j] :+ m2.data[i][j]
+		end for
+	end for
+	ret temp
+end func
+
++func minus(m1: &@Matrix, m2: &@Matrix): @Matrix
+	do @checkShape(&m1, &m2)
+	var temp: @Matrix :: ##m1
+	for i(0, ^m1.data - 1)
+		for j(0, ^m1.data[0] - 1)
+			do temp.data[i][j] :+ m2.data[i][j]
+		end for
+	end for
+	ret temp
+end func
