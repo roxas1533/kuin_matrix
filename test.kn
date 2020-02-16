@@ -4,14 +4,36 @@ var drawMain: wnd@Draw
 func main()
 	do @wndMain :: wnd@makeWnd(null, %aspect, 1600, 900, "Title")
 	do @drawMain :: wnd@makeDraw(@wndMain, 0, 0, 1600, 900, %scale, %scale, false)
-	var mat1: \matrix@Matrix :: #\matrix@Matrix
-	do mat1.new([[0.0, 1.0, 2.0], [3.0, 4.0, 5.0]])
-	var mat2: \matrix@Matrix :: #\matrix@Matrix
-	do mat2.new([[5.0, 1.0, 2.0], [3.0, 4.0, 5.0]])
-	do mat2 :: mat2.trans()
-	do dbg@print("\{mat2.trans()}")
-	do dbg@print(\matrix@mul(&mat1, &mat2).toStr())
+	var a: \matrix@Matrix :: #\matrix@Matrix
+	do a.new([[100.0], [300.0], [1.0]])
+	var b: \matrix@Matrix :: #\matrix@Matrix
+	do b.new([[300.0], [300.0], [1.0]])
+	var c: \matrix@Matrix :: #\matrix@Matrix
+	do c.new([[300.0], [250.0], [1.0]])
+	var d: \matrix@Matrix :: #\matrix@Matrix
+	do d.new([[100.0], [250.0], [1.0]])
+	var aphin: \matrix@Matrix :: #\matrix@Matrix
+	do aphin.new([[1.0, 0.0, 0.0], [lib@tan(lib@toRad(-30.0)), 1.0, 0.0], [0.0, 0.0, 1.0]])
+	do b :: \matrix@mul(&aphin, &b)
+	do c :: \matrix@mul(&aphin, &c)
+	var e: \matrix@Matrix :: #\matrix@Matrix
+	do e.new([[8.0, 16.0, 24.0, 32.0],
+	|[2.0, 7.0, 12.0, 17.0],
+	|[6.0, 17.0, 32.0, 59.0],
+	|[7.0, 22.0, 46.0, 105.0]])
+	
+	do dbg@print("\{\matrix@mul(&e.LUDec()[0], &e.LUDec()[1])}")
 	while(wnd@act())
+		do draw@line(a.data[0][0], a.data[1][0], b.data[0][0], b.data[1][0], 0xFFFF0000)
+		do draw@line(b.data[0][0], b.data[1][0], c.data[0][0], c.data[1][0], 0xFFFF0000)
+		do draw@line(c.data[0][0], c.data[1][0], d.data[0][0], d.data[1][0], 0xFFFF0000)
+		do draw@line(d.data[0][0], d.data[1][0], a.data[0][0], a.data[1][0], 0xFFFF0000)
+		
+		do draw@line(a.data[0][0] + 300.0, a.data[1][0], b.data[0][0] + 300.0, b.data[1][0], 0xFFFF0000)
+		do draw@line(b.data[0][0] + 300.0, b.data[1][0], c.data[0][0] + 300.0, c.data[1][0], 0xFFFF0000)
+		do draw@line(c.data[0][0] + 300.0, c.data[1][0], d.data[0][0] + 300.0, d.data[1][0], 0xFFFF0000)
+		do draw@line(d.data[0][0] + 300.0, d.data[1][0], a.data[0][0] + 300.0, a.data[1][0], 0xFFFF0000)
+		
 		do draw@render(60)
 	end while
 end func

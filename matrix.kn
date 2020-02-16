@@ -12,6 +12,17 @@
 		end for
 		do me.data :: mem
 	end func
+	;単位行列
+	+func newId(I: int)
+		do me.data :: #[I, I]float
+		for i(0, I - 1)
+			for j(0, I - 1)
+				if(i = j)
+					do me.data[i][j] :: 1.0
+				end if
+			end for
+		end for
+	end func
 	+func trans(): @Matrix
 		var transM: [][]float :: #[^me.data[0], ^me.data]float
 		for i(0, ^transM - 1)
@@ -45,6 +56,54 @@
 			end if
 		end for
 		ret c
+	end func
+	;LU分解
+	+func LUDec(): []@Matrix
+		if(^me.data <> ^me.data[0])
+			do dbg@print("正方行列ではありません。")
+			throw 0x00000003
+		end if
+		var temp: @Matrix :: ##me
+		var L: @Matrix :: #@Matrix
+		do L.new(#[^me.data, ^me.data]float)
+		var U: @Matrix :: #@Matrix
+		do U.newId(^me.data)
+		var lu: @Matrix :: ##L
+		for i(0, ^me.data - 1)
+			var n: int :: ^me.data - i - 1
+			do dbg@print("\{n}\n")
+			do L.data[i][i] :: temp.data[0][0]
+			var l0: float :: L.data[i][i]
+			
+			var u1: []float :: #[n]float
+			for j(0, n - 1)
+				do L.data[i + j + 1][i] :: temp.data[j + 1][0]
+				do U.data[i][j + i + 1] :: temp.data[0][j + 1] / l0
+				do u1[j] :: U.data[i][j + i + 1]
+			end for
+			
+			for j(0, n - 1)
+				for k(0, n - 1)
+					do lu.data[j][k] :: temp.data[j + 1][0] * u1[k]
+				end for
+			end for
+			if(n = 0)
+				break i
+			end if
+			var A1: @Matrix :: #@Matrix
+			do A1.new(#[n, n]float)
+			for j(0, n - 1)
+				for k(0, n - 1)
+					do A1.data[j][k] :: temp.data[j + 1][k + 1] - lu.data[j][k]
+				end for
+			end for
+			
+			do temp :: A1
+		end for
+		var retMat: []@Matrix :: #[2]@Matrix
+		do retMat[0] :: L
+		do retMat[1] :: U
+		ret retMat
 	end func
 end class
 
