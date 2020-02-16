@@ -21,8 +21,10 @@ func main()
 	|[2.0, 7.0, 12.0, 17.0],
 	|[6.0, 17.0, 32.0, 59.0],
 	|[7.0, 22.0, 46.0, 105.0]])
+	var ss: \matrix@Matrix :: #\matrix@Matrix
+	do ss.new([[160.0, 70.0, 198.0, 291.0]])
+	do dbg@print("\{\matrix@solvEq(&e, &ss)}")
 	
-	do dbg@print("\{\matrix@mul(&e.LUDec()[0], &e.LUDec()[1])}")
 	while(wnd@act())
 		do draw@line(a.data[0][0], a.data[1][0], b.data[0][0], b.data[1][0], 0xFFFF0000)
 		do draw@line(b.data[0][0], b.data[1][0], c.data[0][0], c.data[1][0], 0xFFFF0000)

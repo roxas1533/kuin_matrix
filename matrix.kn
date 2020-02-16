@@ -59,10 +59,7 @@
 	end func
 	;LU分解
 	+func LUDec(): []@Matrix
-		if(^me.data <> ^me.data[0])
-			do dbg@print("正方行列ではありません。")
-			throw 0x00000003
-		end if
+		do @checksq(&me, null)
 		var temp: @Matrix :: ##me
 		var L: @Matrix :: #@Matrix
 		do L.new(#[^me.data, ^me.data]float)
@@ -71,7 +68,6 @@
 		var lu: @Matrix :: ##L
 		for i(0, ^me.data - 1)
 			var n: int :: ^me.data - i - 1
-			do dbg@print("\{n}\n")
 			do L.data[i][i] :: temp.data[0][0]
 			var l0: float :: L.data[i][i]
 			
@@ -105,8 +101,32 @@
 		do retMat[1] :: U
 		ret retMat
 	end func
+	;列、行ベクトルを一次元配列に変換する
+	+func VecToArray(): []float
+		do @checkVec(&me, null)
+		if(^me.data = 1)
+			ret me.data[0]
+		end if
+		if(^me.data[0] = 1)
+			ret me.trans().data[0]
+		end if
+	end func
 end class
 
+func checkVec(mat: &@Matrix, err: []char)
+	if(^mat.data > 1 & ^mat.data[0] > 1)
+		var text: []char :: (err =& null ?("", err)) ~ "列または行ベクトルではありません。"
+		do dbg@print(text)
+		throw 0x00000004
+	end if
+end func
+func checksq(mat: &@Matrix, err: []char)
+	if(^mat.data <> ^mat.data[0])
+		var text: []char :: (err =& null ?("", err)) ~ "正方行列ではありません。"
+		do dbg@print(text)
+		throw 0x00000003
+	end if
+end func
 func checkShape(m1: &@Matrix, m2: &@Matrix)
 	if(m1.shape()[0] <> m2.shape()[0] | m1.shape()[1] <> m2.shape()[1])
 		do dbg@print("行または列の数が一致しません。")
@@ -154,4 +174,30 @@ end func
 		end for
 	end for
 	ret mulMat
+end func
+
++func solvEq(coefficient: &@Matrix, rvalue: &@Matrix): @Matrix
+	do @checksq(&coefficient, "係数行列が")
+	do @checkVec(&rvalue, "右辺値が")
+	var L: @Matrix :: coefficient.LUDec()[0]
+	var U: @Matrix :: coefficient.LUDec()[1]
+	var y: []float :: #[^coefficient.data]float
+	for i(0, ^coefficient.data - 1)
+		var sum: float :: 0.0
+		for k(0, i - 1, 1)
+			do sum :+ L.data[i][k] * y[k]
+		end for
+		do y[i] :: (rvalue.VecToArray()[i] - sum) / L.data[i][i]
+	end for
+	
+	var x: @Matrix :: #@Matrix
+	do x.new(#[^coefficient.data, 1]float)
+	for i(^coefficient.data - 1, 0, -1)
+		var sum: float :: 0.0
+		for k(i + 1, ^coefficient.data - 1, 1)
+			do sum :+ U.data[i][k] * x.data[k][0]
+		end for
+		do x.data[i][0] :: y[i] - sum
+	end for
+	ret x
 end func
