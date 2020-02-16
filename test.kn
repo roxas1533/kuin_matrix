@@ -4,7 +4,13 @@ var drawMain: wnd@Draw
 func main()
 	do @wndMain :: wnd@makeWnd(null, %aspect, 1600, 900, "Title")
 	do @drawMain :: wnd@makeDraw(@wndMain, 0, 0, 1600, 900, %scale, %scale, false)
-	
+	var mat1: \matrix@Matrix :: #\matrix@Matrix
+	do mat1.new([[0.0, 1.0, 2.0], [3.0, 4.0, 5.0]])
+	var mat2: \matrix@Matrix :: #\matrix@Matrix
+	do mat2.new([[5.0, 1.0, 2.0], [3.0, 4.0, 5.0]])
+	do mat2 :: mat2.trans()
+	do dbg@print("\{mat2.trans()}")
+	do dbg@print(\matrix@mul(&mat1, &mat2).toStr())
 	while(wnd@act())
 		do draw@render(60)
 	end while

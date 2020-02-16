@@ -1,8 +1,10 @@
 +class Matrix()
 	+var data: [][]float
+	var maxlen: int
 	+func new(mem: [][]float)
 		var len: int :: ^mem[0]
-		for i(1, ^mem - 1)
+		do me.maxlen :: 1
+		for i(0, ^mem - 1)
 			if(^mem[i] <> len)
 				do dbg@print("行列になっていません。")
 				throw 0x00000001
@@ -28,6 +30,14 @@
 		var c: []char :: "|"
 		for i(0, ^me.data - 1)
 			for j(0, ^me.data[0] - 1)
+				do me.maxlen :: (^me.data[i][j].toStr()) > me.maxlen ?(^me.data[i][j].toStr(), me.maxlen)
+			end for
+		end for
+		for i(0, ^me.data - 1)
+			for j(0, ^me.data[0] - 1)
+				for(0, me.maxlen - ^me.data[i][j].toStr())
+					do c :~ " "
+				end for
 				do c :~ me.data[i][j].toStr() ~ (j = ^me.data[0] - 1 ?("|\n", ","))
 			end for
 			if(i <> ^me.data - 1)
@@ -61,8 +71,28 @@ end func
 	var temp: @Matrix :: ##m1
 	for i(0, ^m1.data - 1)
 		for j(0, ^m1.data[0] - 1)
-			do temp.data[i][j] :+ m2.data[i][j]
+			do temp.data[i][j] :- m2.data[i][j]
 		end for
 	end for
 	ret temp
+end func
+
++func mul(m1: &@Matrix, m2: &@Matrix): @Matrix
+	if(^m1.data[0] <> ^m2.data)
+		do dbg@print("列と行が一致していません")
+		throw 0x00000003
+	end if
+	var temp: @Matrix :: m2.trans()
+	var mulMat: @Matrix :: #@Matrix
+	do mulMat.new(#[^m1.data, ^m2.data[0]]float)
+	for i(0, ^m1.data - 1)
+		for j(0, ^mulMat.data[0] - 1)
+			var t: float :: 0.0
+			for k(0, ^m1.data[0] - 1)
+				do t :+ (m1.data[i][k] * temp.data[j][k])
+			end for
+			do mulMat.data[i][j] :: t
+		end for
+	end for
+	ret mulMat
 end func
