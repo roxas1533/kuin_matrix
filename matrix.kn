@@ -10,6 +10,19 @@
 	do makeMat.data :: data
 	ret makeMat
 end func
+;単位行列
++func makeIdentity(num: int): @Matrix
+	var makeMat: @Matrix :: #@Matrix
+	do makeMat.data :: #[num, num]float
+	for i(0, num - 1)
+		for j(0, num - 1)
+			if(i = j)
+				do makeMat.data[i][j] :: 1.0
+			end if
+		end for
+	end for
+	ret makeMat
+end func
 
 +class Matrix()
 	+var data: [][]float
@@ -17,17 +30,7 @@ end func
 	*func ctor()
 		do me.maxlen :: 1
 	end func
-	;単位行列
-	+func newId(I: int)
-		do me.data :: #[I, I]float
-		for i(0, I - 1)
-			for j(0, I - 1)
-				if(i = j)
-					do me.data[i][j] :: 1.0
-				end if
-			end for
-		end for
-	end func
+	
 	+func trans(): @Matrix
 		var transM: [][]float :: #[^me.data[0], ^me.data]float
 		for i(0, ^transM - 1)
@@ -66,8 +69,7 @@ end func
 		do @checksq(&me, null)
 		var temp: @Matrix :: ##me
 		var L: @Matrix :: @makeMatrix(#[^me.data, ^me.data]float)
-		var U: @Matrix :: #@Matrix
-		do U.newId(^me.data)
+		var U: @Matrix :: @makeIdentity(^me.data)
 		var lu: @Matrix :: ##L
 		for i(0, ^me.data - 1)
 			var n: int :: ^me.data - i - 1
