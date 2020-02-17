@@ -4,25 +4,18 @@ var drawMain: wnd@Draw
 func main()
 	do @wndMain :: wnd@makeWnd(null, %aspect, 1600 / 2, 900 / 2, "Title")
 	do @drawMain :: wnd@makeDraw(@wndMain, 0, 0, 1600 / 2, 900 / 2, %scale, %scale, false)
-	var a: \matrix@Matrix :: #\matrix@Matrix
-	do a.new([[100.0], [300.0], [1.0]])
-	var b: \matrix@Matrix :: #\matrix@Matrix
-	do b.new([[300.0], [300.0], [1.0]])
-	var c: \matrix@Matrix :: #\matrix@Matrix
-	do c.new([[300.0], [250.0], [1.0]])
-	var d: \matrix@Matrix :: #\matrix@Matrix
-	do d.new([[100.0], [250.0], [1.0]])
-	var aphin: \matrix@Matrix :: #\matrix@Matrix
-	do aphin.new([[1.0, 0.0, 0.0], [lib@tan(lib@toRad(-30.0)), 1.0, 0.0], [0.0, 0.0, 1.0]])
+	var a: \matrix@Matrix :: \matrix@makeMatrix([[100.0], [300.0], [1.0]])
+	var b: \matrix@Matrix :: \matrix@makeMatrix([[300.0], [300.0], [1.0]])
+	var c: \matrix@Matrix :: \matrix@makeMatrix([[300.0], [250.0], [1.0]])
+	var d: \matrix@Matrix :: \matrix@makeMatrix([[100.0], [250.0], [1.0]])
+	var aphin: \matrix@Matrix :: \matrix@makeMatrix([[1.0, 0.0, 0.0], [lib@tan(lib@toRad(-30.0)), 1.0, 0.0], [0.0, 0.0, 1.0]])
 	do b :: \matrix@mul(&aphin, &b)
 	do c :: \matrix@mul(&aphin, &c)
-	var e: \matrix@Matrix :: #\matrix@Matrix
-	do e.new([[8.0, 16.0, 24.0, 32.0],
+	var e: \matrix@Matrix :: \matrix@makeMatrix([[8.0, 16.0, 24.0, 32.0],
 	|[2.0, 7.0, 12.0, 17.0],
 	|[6.0, 17.0, 32.0, 59.0],
 	|[7.0, 22.0, 46.0, 105.0]])
-	var ss: \matrix@Matrix :: #\matrix@Matrix
-	do ss.new([[160.0, 70.0, 198.0, 291.0]])
+	var ss: \matrix@Matrix :: \matrix@makeMatrix([[160.0, 70.0, 198.0, 291.0]])
 	do e :: \matrix@solvEq(&aphin, &c)
 	
 	while(wnd@act())

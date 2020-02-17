@@ -1,16 +1,21 @@
++func makeMatrix(data: [][]float): @Matrix
+	var len: int :: ^data[0]
+	for i(0, ^data - 1)
+		if(^data[i] <> len)
+			do dbg@print("行列になっていません。")
+			throw 0x00000001
+		end if
+	end for
+	var makeMat: @Matrix :: #@Matrix
+	do makeMat.data :: data
+	ret makeMat
+end func
+
 +class Matrix()
 	+var data: [][]float
 	var maxlen: int
-	+func new(mem: [][]float)
-		var len: int :: ^mem[0]
+	*func ctor()
 		do me.maxlen :: 1
-		for i(0, ^mem - 1)
-			if(^mem[i] <> len)
-				do dbg@print("行列になっていません。")
-				throw 0x00000001
-			end if
-		end for
-		do me.data :: mem
 	end func
 	;単位行列
 	+func newId(I: int)
@@ -30,8 +35,7 @@
 				do transM[i][j] :: me.data[j][i]
 			end for
 		end for
-		var transverse: @Matrix :: #@Matrix
-		do transverse.new(transM)
+		var transverse: @Matrix :: @makeMatrix(transM)
 		ret transverse
 	end func
 	+func shape(): []int
@@ -61,8 +65,7 @@
 	+func LUDec(): []@Matrix
 		do @checksq(&me, null)
 		var temp: @Matrix :: ##me
-		var L: @Matrix :: #@Matrix
-		do L.new(#[^me.data, ^me.data]float)
+		var L: @Matrix :: @makeMatrix(#[^me.data, ^me.data]float)
 		var U: @Matrix :: #@Matrix
 		do U.newId(^me.data)
 		var lu: @Matrix :: ##L
@@ -92,8 +95,7 @@
 			if(n = 0)
 				break i
 			end if
-			var A1: @Matrix :: #@Matrix
-			do A1.new(#[n, n]float)
+			var A1: @Matrix :: @makeMatrix(#[n, n]float)
 			for j(0, n - 1)
 				for k(0, n - 1)
 					do A1.data[j][k] :: temp.data[j + 1][k + 1] - lu.data[j][k]
@@ -168,8 +170,7 @@ end func
 		throw 0x00000003
 	end if
 	var temp: @Matrix :: m2.trans()
-	var mulMat: @Matrix :: #@Matrix
-	do mulMat.new(#[^m1.data, ^m2.data[0]]float)
+	var mulMat: @Matrix :: @makeMatrix(#[^m1.data, ^m2.data[0]]float)
 	for i(0, ^m1.data - 1)
 		for j(0, ^mulMat.data[0] - 1)
 			var t: float :: 0.0
@@ -196,8 +197,7 @@ end func
 		do y[i] :: (rvalue.VecToArray()[i] - sum) / L.data[i][i]
 	end for
 	
-	var x: @Matrix :: #@Matrix
-	do x.new(#[^coefficient.data, 1]float)
+	var x: @Matrix :: @makeMatrix(#[^coefficient.data, 1]float)
 	for i(^coefficient.data - 1, 0, -1)
 		var sum: float :: 0.0
 		for k(i + 1, ^coefficient.data - 1, 1)
