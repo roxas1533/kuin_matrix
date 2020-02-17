@@ -2,8 +2,8 @@ var wndMain: wnd@Wnd
 var drawMain: wnd@Draw
 
 func main()
-	do @wndMain :: wnd@makeWnd(null, %aspect, 1600, 900, "Title")
-	do @drawMain :: wnd@makeDraw(@wndMain, 0, 0, 1600, 900, %scale, %scale, false)
+	do @wndMain :: wnd@makeWnd(null, %aspect, 1600 / 2, 900 / 2, "Title")
+	do @drawMain :: wnd@makeDraw(@wndMain, 0, 0, 1600 / 2, 900 / 2, %scale, %scale, false)
 	var a: \matrix@Matrix :: #\matrix@Matrix
 	do a.new([[100.0], [300.0], [1.0]])
 	var b: \matrix@Matrix :: #\matrix@Matrix
@@ -23,7 +23,7 @@ func main()
 	|[7.0, 22.0, 46.0, 105.0]])
 	var ss: \matrix@Matrix :: #\matrix@Matrix
 	do ss.new([[160.0, 70.0, 198.0, 291.0]])
-	do dbg@print("\{\matrix@solvEq(&e, &ss)}")
+	do e :: \matrix@solvEq(&aphin, &c)
 	
 	while(wnd@act())
 		do draw@line(a.data[0][0], a.data[1][0], b.data[0][0], b.data[1][0], 0xFFFF0000)
@@ -31,10 +31,10 @@ func main()
 		do draw@line(c.data[0][0], c.data[1][0], d.data[0][0], d.data[1][0], 0xFFFF0000)
 		do draw@line(d.data[0][0], d.data[1][0], a.data[0][0], a.data[1][0], 0xFFFF0000)
 		
-		do draw@line(a.data[0][0] + 300.0, a.data[1][0], b.data[0][0] + 300.0, b.data[1][0], 0xFFFF0000)
-		do draw@line(b.data[0][0] + 300.0, b.data[1][0], c.data[0][0] + 300.0, c.data[1][0], 0xFFFF0000)
-		do draw@line(c.data[0][0] + 300.0, c.data[1][0], d.data[0][0] + 300.0, d.data[1][0], 0xFFFF0000)
-		do draw@line(d.data[0][0] + 300.0, d.data[1][0], a.data[0][0] + 300.0, a.data[1][0], 0xFFFF0000)
+		do draw@line(a.data[0][0] + 300.0, a.data[1][0], \matrix@solvEq(&aphin, &b).data[0][0] + 300.0, \matrix@solvEq(&aphin, &b).data[1][0], 0xFF0000FF)
+		do draw@line(\matrix@solvEq(&aphin, &b).data[0][0] + 300.0, \matrix@solvEq(&aphin, &b).data[1][0], e.data[0][0] + 300.0, e.data[1][0], 0xFFFFFF00)
+		do draw@line(e.data[0][0] + 300.0, e.data[1][0], d.data[0][0] + 300.0, d.data[1][0], 0xFF00FF00)
+		do draw@line(d.data[0][0] + 300.0, d.data[1][0], a.data[0][0] + 300.0, a.data[1][0], 0xFFFFFFFF)
 		
 		do draw@render(60)
 	end while

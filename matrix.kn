@@ -74,9 +74,15 @@
 			var u1: []float :: #[n]float
 			for j(0, n - 1)
 				do L.data[i + j + 1][i] :: temp.data[j + 1][0]
-				do U.data[i][j + i + 1] :: temp.data[0][j + 1] / l0
+				try
+					do U.data[i][j + i + 1] :: temp.data[0][j + 1] / l0
+				catch 0xC0000090
+					do dbg@print("LU分解できない行列です。")
+					throw 0x00000005
+				end try
 				do u1[j] :: U.data[i][j + i + 1]
 			end for
+			
 			
 			for j(0, n - 1)
 				for k(0, n - 1)
