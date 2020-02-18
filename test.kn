@@ -16,8 +16,8 @@ func main()
 	|[6.0, 17.0, 32.0, 59.0],
 	|[7.0, 22.0, 46.0, 105.0]])
 	var ss: \matrix@Matrix :: \matrix@makeMatrix([[160.0, 70.0, 198.0, 291.0]])
-	do e :: \matrix@solvEq(&aphin, &c)
-	
+	;do e :: \matrix@solvEq(&aphin, &c)
+	do e.det()
 	while(wnd@act())
 		do draw@line(a.data[0][0], a.data[1][0], b.data[0][0], b.data[1][0], 0xFFFF0000)
 		do draw@line(b.data[0][0], b.data[1][0], c.data[0][0], c.data[1][0], 0xFFFF0000)

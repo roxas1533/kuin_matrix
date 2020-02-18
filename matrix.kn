@@ -1,11 +1,5 @@
 +func makeMatrix(data: [][]float): @Matrix
-	var len: int :: ^data[0]
-	for i(0, ^data - 1)
-		if(^data[i] <> len)
-			do dbg@print("行列になっていません。")
-			throw 0x00000001
-		end if
-	end for
+	do @checkMat(&data)
 	var makeMat: @Matrix :: #@Matrix
 	do makeMat.data :: data
 	ret makeMat
@@ -22,6 +16,21 @@ end func
 		end for
 	end for
 	ret makeMat
+end func
++func makePermutation(sa: @Matrix, ta: @Matrix, num: int, replace: @Matrix, count: &int)
+	var N: int :: ^sa.data[0]
+	if(num = N + 1)
+		do replace.data[count] :: ##ta.data[0]
+		do count :+ 1
+	else
+		for i(1, N - num + 1)
+			do ta.data[0][num - 1] :: sa.data[0][i - 1]
+			var temp: @Matrix :: ##sa
+			do sa.data[0][i - 1] :$ sa.data[0][N - num]
+			do @makePermutation(sa, ta, num + 1, replace, &count)
+			do sa :: temp
+		end for
+	end if
 end func
 
 +class Matrix()
@@ -62,7 +71,7 @@ end func
 				do c :~ "|"
 			end if
 		end for
-		ret c
+		ret c.trimRight()
 	end func
 	;LU分解
 	+func LUDec(): []@Matrix
@@ -111,6 +120,27 @@ end func
 		do retMat[1] :: U
 		ret retMat
 	end func
+	;行列式
+	+func det(): float
+		do @checksq(&me, null)
+		var co: int :: 0
+		var replace: @Matrix :: @makeMatrix(#[math@factInt(^me.data), ^me.data]float)
+		do @makePermutation(@makeOrder(^me.data),
+		|@makeMatrix(#[1, ^me.data]float), 1, replace, &co)
+		var rep: []@Matrix :: #[math@factInt(^me.data)]@Matrix
+		for i(0, math@factInt(^me.data) - 1)
+			do rep[i] :: @makeMatrix([@makeOrder(^me.data).data[0], replace.data[i]])
+			do dbg@print("\{rep[i]}\n")
+		end for
+	end func
+	+func addLine(line: [][]float)
+		do @checkMat(&line)
+		if(^me.data[0] <> ^line[0])
+			do dbg@print("列の数が一致しません。")
+			throw 0x00000002
+		end if
+		do me.data :: me.data ~ line
+	end func
 	;列、行ベクトルを一次元配列に変換する
 	+func VecToArray(): []float
 		do @checkVec(&me, null)
@@ -123,6 +153,13 @@ end func
 	end func
 end class
 
+func makeOrder(n: int): @Matrix
+	var f: []float :: #[n]float
+	for i(0, n - 1)
+		do f[i] :: (i + 1) $ float
+	end for
+	ret @makeMatrix([f])
+end func
 func checkVec(mat: &@Matrix, err: []char)
 	if(^mat.data > 1 & ^mat.data[0] > 1)
 		var text: []char :: (err =& null ?("", err)) ~ "列または行ベクトルではありません。"
@@ -142,6 +179,15 @@ func checkShape(m1: &@Matrix, m2: &@Matrix)
 		do dbg@print("行または列の数が一致しません。")
 		throw 0x00000002
 	end if
+end func
+func checkMat(data: &[][]float)
+	var len: int :: ^data[0]
+	for i(0, ^data - 1)
+		if(^data = 0 | ^data[i] <> len)
+			do dbg@print("行列になっていません。")
+			throw 0x00000001
+		end if
+	end for
 end func
 
 +func add(m1: &@Matrix, m2: &@Matrix): @Matrix
@@ -168,7 +214,7 @@ end func
 
 +func mul(m1: &@Matrix, m2: &@Matrix): @Matrix
 	if(^m1.data[0] <> ^m2.data)
-		do dbg@print("列と行が一致していません")
+		do dbg@print("列と行のサイズが一致していません")
 		throw 0x00000003
 	end if
 	var temp: @Matrix :: m2.trans()
