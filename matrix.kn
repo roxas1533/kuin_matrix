@@ -17,7 +17,7 @@ end func
 	end for
 	ret makeMat
 end func
-+func makePermutation(sa: @Matrix, ta: @Matrix, num: int, replace: @Matrix, count: &int)
+func makePermutation(sa: @Matrix, ta: @Matrix, num: int, replace: @Matrix, count: &int)
 	var N: int :: ^sa.data[0]
 	if(num = N + 1)
 		do replace.data[count] :: ##ta.data[0]
@@ -88,12 +88,11 @@ end func
 			var u1: []float :: #[n]float
 			for j(0, n - 1)
 				do L.data[i + j + 1][i] :: temp.data[j + 1][0]
-				try
-					do U.data[i][j + i + 1] :: temp.data[0][j + 1] / l0
-				catch 0xC0000090
+				if(l0 = 0.0)
 					do dbg@print("LU分解できない行列です。")
 					throw 0x00000005
-				end try
+				end if
+				do U.data[i][j + i + 1] :: temp.data[0][j + 1] / l0
 				do u1[j] :: U.data[i][j + i + 1]
 			end for
 			
@@ -123,15 +122,48 @@ end func
 	;行列式
 	+func det(): float
 		do @checksq(&me, null)
-		var co: int :: 0
-		var replace: @Matrix :: @makeMatrix(#[math@factInt(^me.data), ^me.data]float)
-		do @makePermutation(@makeOrder(^me.data),
-		|@makeMatrix(#[1, ^me.data]float), 1, replace, &co)
-		var rep: []@Matrix :: #[math@factInt(^me.data)]@Matrix
-		for i(0, math@factInt(^me.data) - 1)
-			do rep[i] :: @makeMatrix([@makeOrder(^me.data).data[0], replace.data[i]])
-			do dbg@print("\{rep[i]}\n")
-		end for
+		try
+			var LU: []@Matrix :: me.LUDec()
+			var sigma: float :: 1.0
+			for i(0, ^me.data - 1)
+				do sigma :* LU[0].data[i][i]
+			end for
+			ret sigma
+		catch 0x00000005
+			var co: int :: 0
+			var result: float :: 0.0
+			var replace: @Matrix :: @makeMatrix(#[math@factInt(^me.data), ^me.data]float)
+			do @makePermutation(@makeOrder(^me.data),
+			|@makeMatrix(#[1, ^me.data]float), 1, replace, &co)
+			var rep: []@Matrix :: #[math@factInt(^me.data)]@Matrix
+			for i(0, math@factInt(^me.data) - 1)
+				do rep[i] :: @makeMatrix([@makeOrder(^me.data).data[0], replace.data[i]])
+				var allCount: int :: 0
+				for j(0, ^me.data[0] - 1)
+					var start: float :: rep[i].data[0][j]
+					var s: float :: start
+					var end1: float :: rep[i].data[1][j]
+					var count: int :: 0
+					while(s <> end1)
+						if(end1 < s)
+							skip j
+						end if
+						do start :: rep[i].data[0][end1 $ int - 1]
+						do end1 :: rep[i].data[1][end1 $ int - 1]
+						do count :+ 1
+					end while
+					do allCount :+ count
+				end for
+				var sign: int :: (-1) ^ allCount % 2
+				var sigma: float :: 1.0
+				for j(0, ^me.data[0] - 1)
+					do sigma :* me.data[rep[i].data[0][j] $ int - 1][rep[i].data[1][j] $ int - 1]
+				end for
+				do sigma :* sign $ float
+				do result :+ sigma
+			end for
+			ret result
+		end try
 	end func
 	+func addLine(line: [][]float)
 		do @checkMat(&line)
