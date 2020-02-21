@@ -3,7 +3,7 @@ Kuin言語用の行列ライブラリ
 ## Matrixクラス
 ### \matrix@Matrix
 行列のクラスです。
-### Matrix@new
+### Matrix@makeMatrix
 「Matrix@new」は、行列クラスのインスタンスを生成する関数です。  
 ```
 func makeMatrix(data : [][]float): @Matrix
@@ -31,3 +31,47 @@ func makeIdentity(num : int): @Matrix
 |発生条件|例外コード|
 |:--|:--|
 |numに0以下が渡される|0x00000006|
+### Matrix@shape
+「Matrix@shape」は、行列のサイズを返す関数です。
+```
+func shape(): []int
+```
+|戻り値|説明|
+|:---|:---|
+|戻り値|[行,列]で表されるint型の一次元配列|
+### Matrix@trans
+「Matrix@trans」は、転置行列を返す関数です。
+```
+func trans(): @Matrix
+```
+|戻り値|説明|
+|:---|:---|
+|戻り値|自分自身の転置行列|  
+### Matrix@det
+「Matrix@det」は、行列式を返す関数です。
+始めに、LU分解法を用いて行列式をだしますが、LU分解できない行列の場合定義に従って計算します。
+```
+func det(): float
+```
+|戻り値|説明|
+|:---|:---|
+|戻り値|行列式|  
+
+**例外**  
+|発生条件|例外コード|
+|:--|:--|
+|行列が正方行列ではない|0x00000003|
+### Matrix@addLine
+「Matrix@addLine」は、現在の行列に行を追加する関数です。
+この関数は直接自分自身の行列を変更します。
+```
+func addLine(line:[][]float)
+```
+|引数等|説明|
+|:---|:---|
+|line|追加する行|
+
+**例外**  
+|発生条件|例外コード|
+|:--|:--|
+|追加される行の列と現在の列の数が一致しない|0x00000002|
