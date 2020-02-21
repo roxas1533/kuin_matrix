@@ -173,6 +173,17 @@ end func
 		end if
 		do me.data :: me.data ~ line
 	end func
+	+func addCol(line: [][]float)
+		do @checkMat(&line)
+		if(^me.data <> ^line)
+			do dbg@print("行の数が一致しません。")
+			throw 0x00000002
+		end if
+		for i(0, ^me.data - 1)
+			do me.data[i] :~ line[i]
+		end for
+	end func
+	
 	;列、行ベクトルを一次元配列に変換する
 	+func VecToArray(): []float
 		do @checkVec(&me, null)
