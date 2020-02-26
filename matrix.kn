@@ -1,3 +1,16 @@
++func makeVector2(x: float, y: float): @Vector2
+	var vector2: @Vector2 :: #@Vector2
+	do vector2.x :: x
+	do vector2.y :: y
+	do vector2.data :: [[x], [y]]
+	ret vector2
+end func
++class Vector2(@Matrix)
+	+var x: float
+	+var y: float
+	
+end class
+
 +func makeMatrix(data: [][]float): @Matrix
 	do @checkMat(&data)
 	var makeMat: @Matrix :: #@Matrix
