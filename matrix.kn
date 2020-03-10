@@ -287,7 +287,33 @@ end func
 	end for
 	ret mulMat
 end func
-
++func constAdd(c: float, m: &@Matrix): @Matrix
+	var data: [][]float :: m.data
+	for i(0, ^data)
+		for j(0, ^data[0])
+			do data[i][j] :+ c
+		end for
+	end for
+	ret @makeMatrix(data)
+end func
++func constMinus(c: float, m: &@Matrix): @Matrix
+	var data: [][]float :: m.data
+	for i(0, ^data)
+		for j(0, ^data[0])
+			do data[i][j] :- c
+		end for
+	end for
+	ret @makeMatrix(data)
+end func
++func constMul(c: float, m: &@Matrix): @Matrix
+	var data: [][]float :: m.data
+	for i(0, ^data)
+		for j(0, ^data[0])
+			do data[i][j] :* c
+		end for
+	end for
+	ret @makeMatrix(data)
+end func
 +func solvEq(coefficient: &@Matrix, rvalue: &@Matrix): @Matrix
 	do @checksq(&coefficient, "係数行列が")
 	do @checkVec(&rvalue, "右辺値が")
