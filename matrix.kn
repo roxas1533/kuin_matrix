@@ -47,6 +47,12 @@ end func
 		ret me.data[1][0]
 	end func
 end class
++func dot(m1: @Vector2, m2: @Vector2): float
+	ret m1.x() * m2.x() + m1.y() * m2.y()
+end func
++func cross(m1: @Vector2, m2: @Vector2): float
+	ret m1.x() * m2.y() - m1.y() * m2.x()
+end func
 +class Matrix()
 	+var data: [][]float
 	var maxlen: int
