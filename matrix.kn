@@ -34,6 +34,29 @@ func makePermutation(sa: @Matrix, ta: @Matrix, num: int, replace: @Matrix, count
 		end for
 	end if
 end func
++func makeVector3(x: float, y: float, z: float): @Vector3
+	var vector3: @Vector3 :: #@Vector3
+	do vector3.data :: [[x], [y], [z]]
+	ret vector3
+end func
++class Vector3(@Matrix)
+	+func x(): float
+		ret me.data[0][0]
+	end func
+	+func y(): float
+		ret me.data[1][0]
+	end func
+	+func z(): float
+		ret me.data[2][0]
+	end func
+end class
++func dot3(m1: @Vector3, m2: @Vector3): float
+	ret m1.x() * m2.x() + m1.y() * m2.y() + m1.z() * m2.z()
+end func
++func cross3(m1: @Vector3, m2: @Vector3): @Vector3
+	ret @makeVector3(m1.y() * m2.z() - m1.z() * m2.y(), m1.z() * m2.x() - m1.x() * m2.z(), m1.x() * m2.y() - m1.y() * m2.x())
+end func
+;-------------------------------------------------------
 +func makeVector2(x: float, y: float): @Vector2
 	var vector2: @Vector2 :: #@Vector2
 	do vector2.data :: [[x], [y]]
@@ -47,12 +70,13 @@ end func
 		ret me.data[1][0]
 	end func
 end class
-+func dot(m1: @Vector2, m2: @Vector2): float
++func dot2(m1: @Vector2, m2: @Vector2): float
 	ret m1.x() * m2.x() + m1.y() * m2.y()
 end func
-+func cross(m1: @Vector2, m2: @Vector2): float
++func cross2(m1: @Vector2, m2: @Vector2): float
 	ret m1.x() * m2.y() - m1.y() * m2.x()
 end func
+;-----------------------------------------------------------------
 +class Matrix()
 	+var data: [][]float
 	var maxlen: int
